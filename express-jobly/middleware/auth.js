@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 /** Convenience middleware to handle common auth cases in routes. */
 
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
-const { UnauthorizedError } = require("../expressError");
-
+const jwt = require('jsonwebtoken');
+const { notify } = require('superagent');
+const { SECRET_KEY } = require('../config');
+const { UnauthorizedError } = require('../expressError');
 
 /** Middleware: Authenticate user.
  *
@@ -16,16 +16,16 @@ const { UnauthorizedError } = require("../expressError");
  */
 
 function authenticateJWT(req, res, next) {
-  try {
-    const authHeader = req.headers && req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      res.locals.user = jwt.verify(token, SECRET_KEY);
-    }
-    return next();
-  } catch (err) {
-    return next();
-  }
+	try {
+		const authHeader = req.headers && req.headers.authorization;
+		if (authHeader) {
+			const token = authHeader.replace(/^[Bb]earer /, '').trim();
+			res.locals.user = jwt.verify(token, SECRET_KEY);
+		}
+		return next();
+	} catch (err) {
+		return next();
+	}
 }
 
 /** Middleware to use when they must be logged in.
@@ -34,16 +34,40 @@ function authenticateJWT(req, res, next) {
  */
 
 function ensureLoggedIn(req, res, next) {
-  try {
-    if (!res.locals.user) throw new UnauthorizedError();
-    return next();
-  } catch (err) {
-    return next(err);
-  }
+	try {
+		if (!res.locals.user) throw new UnauthorizedError();
+		return next();
+	} catch (err) {
+		return next(err);
+	}
 }
 
+// Middleware to ensure a user is an admin. If not, raises  Unauthorized error.
+
+function ensureAdmin(req, res, next) {
+	try {
+		if (!res.locals.user.isAdmin) throw new UnauthorizedError();
+		return next();
+	} catch (err) {
+		return next(err);
+	}
+}
+
+// Middleware to ensure a user is an admin or the user matches username from the request. If not, raises  Unauthorized error.
+
+function ensureAdminOrUser(req, res, next) {
+	try {
+		if (req.params.username !== res.locals.user.username && !res.locals.user.isAdmin) throw new UnauthorizedError();
+		return next();
+	} catch (err) {
+		console.log(err);
+		return next(err);
+	}
+}
 
 module.exports = {
-  authenticateJWT,
-  ensureLoggedIn,
+	authenticateJWT,
+	ensureLoggedIn,
+	ensureAdmin,
+	ensureAdminOrUser
 };
