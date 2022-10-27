@@ -166,6 +166,20 @@ class Company {
 	// Filters employees by name, partial name and number of employees.
 
 	static async filter(reqBody) {
+		const validKeys = [
+			'name',
+			'minEmployees',
+			'maxEmployees'
+		];
+		const errorMessages = [];
+		for (let key in reqBody) {
+			if (!validKeys.includes(key)) {
+				errorMessages.push(`Cannot filter by ${key}`);
+			}
+		}
+		if (errorMessages.length > 0) {
+			throw new BadRequestError(errorMessages);
+		}
 		const query = `SELECT handle,
     name,
     description,
@@ -209,12 +223,6 @@ class Company {
 				whereExpressions.push(`AND num_employees <= ${maxEmployees}`);
 			}
 		}
-
-		// for (let key in reqBody) {
-		// 	if (key !== 'name' || key !== 'minEmployees' || key !== 'maxEmployees') {
-		// 		throw new BadRequestError(`Cannot filter by ${key}`);
-		// 	}
-		// }
 
 		const newQuery = query + whereExpressions.join(' ');
 		console.log(newQuery);

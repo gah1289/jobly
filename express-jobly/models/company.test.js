@@ -88,12 +88,16 @@ describe('findAll', function() {
 describe('get', function() {
 	test('works', async function() {
 		let company = await Company.get('c1');
+		console.log(company);
 		expect(company).toEqual({
-			handle       : 'c1',
-			name         : 'C1',
-			description  : 'Desc1',
-			numEmployees : 1,
-			logoUrl      : 'http://c1.img'
+			company : {
+				handle       : 'c1',
+				name         : 'C1',
+				description  : 'Desc1',
+				numEmployees : 1,
+				logoUrl      : 'http://c1.img'
+			},
+			jobs    : []
 		});
 	});
 
@@ -285,7 +289,13 @@ describe('filter', function() {
 		const reqBody = {
 			handle : 'c1'
 		};
-		let res = await Company.filter(reqBody);
-		expect(() => res.toThrow('Cannot filter by handle'));
+
+		try {
+			await Company.filter(reqBody);
+			fail();
+		} catch (err) {
+			console.log(err);
+			expect(err instanceof BadRequestError).toBeTruthy();
+		}
 	});
 });

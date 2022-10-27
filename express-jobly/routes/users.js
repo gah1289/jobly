@@ -11,6 +11,7 @@ const User = require('../models/user');
 const { createToken } = require('../helpers/tokens');
 const userNewSchema = require('../schemas/userNew.json');
 const userUpdateSchema = require('../schemas/userUpdate.json');
+const Job = require('../models/job');
 
 const router = express.Router();
 
@@ -37,6 +38,24 @@ router.post('/', ensureLoggedIn, ensureAdmin, async function(req, res, next) {
 		const user = await User.register(req.body);
 		const token = createToken(user);
 		return res.status(201).json({ user, token });
+	} catch (err) {
+		return next(err);
+	}
+});
+
+// Allows a user or an admin to apply to a job.
+// Should throw an error if the user does not exist, job does not exist.
+
+// Returns {applied: jobId}
+
+router.post('/:username/jobs/:id', ensureLoggedIn, ensureAdminOrUser, async function(req, res, next) {
+	try {
+		const userData = await User.get(req.params.username);
+		const username = userData.username;
+		const jobData = await Job.get(req.params.id);
+		const jobId = jobData.id;
+		const application = await User.apply(username, jobId);
+		return res.status(201).json(application);
 	} catch (err) {
 		return next(err);
 	}

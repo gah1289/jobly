@@ -150,6 +150,20 @@ class Job {
 	// Filters jobs by title, salary whether or not they have equity.
 
 	static async filter(reqBody) {
+		const validKeys = [
+			'title',
+			'minSalary',
+			'hasEquity'
+		];
+		const errorMessages = [];
+		for (let key in reqBody) {
+			if (!validKeys.includes(key)) {
+				errorMessages.push(`Cannot filter by ${key}`);
+			}
+		}
+		if (errorMessages.length > 0) {
+			throw new BadRequestError(errorMessages);
+		}
 		const query = `SELECT id,
         title,
         salary,

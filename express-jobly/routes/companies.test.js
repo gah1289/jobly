@@ -58,7 +58,6 @@ describe('POST /companies', function() {
 
 describe('GET /companies', function() {
 	test('ok for anon', async function() {
-		delete axios.defaults.headers.common['Authorization'];
 		const resp = await request(app).get('/companies');
 		expect(resp.body).toEqual({
 			companies : [
@@ -109,7 +108,8 @@ describe('GET /companies/:handle', function() {
 				description  : 'Desc1',
 				numEmployees : 1,
 				logoUrl      : 'http://c1.img'
-			}
+			},
+			jobs    : []
 		});
 	});
 
@@ -122,7 +122,8 @@ describe('GET /companies/:handle', function() {
 				description  : 'Desc2',
 				numEmployees : 2,
 				logoUrl      : 'http://c2.img'
-			}
+			},
+			jobs    : []
 		});
 	});
 
