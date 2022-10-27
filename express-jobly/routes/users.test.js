@@ -120,7 +120,6 @@ describe('GET /users', function() {
 		await User.update('u3', { isAdmin: true });
 		const adminToken = createToken({ username: 'u3', isAdmin: true });
 		const resp = await request(app).get('/users').set('authorization', `Bearer ${adminToken}`);
-		console.log('resp.body--->', resp.body);
 		expect(resp.body).toEqual({
 			users : [
 				{

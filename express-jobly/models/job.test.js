@@ -270,7 +270,7 @@ describe('filter', function() {
 			hasEquity : true
 		};
 		let jobs = await Job.filter(reqBody);
-		console.log(jobs);
+
 		expect(jobs).toEqual([
 			{
 				id            : expect.any(Number),

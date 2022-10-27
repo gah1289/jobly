@@ -232,7 +232,6 @@ describe('apply', function() {
         FROM jobs WHERE title='testJob'`);
 		let job = jobData.rows[0];
 		let res = await User.apply('u1', job.id);
-		console.log(res);
 		expect(res.applied).toBe(job.id);
 	});
 });

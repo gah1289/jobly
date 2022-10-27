@@ -204,13 +204,6 @@ class Job {
 			}
 		}
 
-		// for (let key in reqBody) {
-		// 	if (key !== 'title' || key !== 'minSalary' || key !== 'hasEquity') {
-		// 		console.log(key);
-		// 		throw new BadRequestError(`Cannot filter by ${key}`);
-		// 	}
-		// }
-
 		const newQuery = query + whereExpressions.join(' ');
 
 		const jobRes = await db.query(newQuery);

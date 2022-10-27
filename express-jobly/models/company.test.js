@@ -88,7 +88,7 @@ describe('findAll', function() {
 describe('get', function() {
 	test('works', async function() {
 		let company = await Company.get('c1');
-		console.log(company);
+
 		expect(company).toEqual({
 			company : {
 				handle       : 'c1',
@@ -294,7 +294,6 @@ describe('filter', function() {
 			await Company.filter(reqBody);
 			fail();
 		} catch (err) {
-			console.log(err);
 			expect(err instanceof BadRequestError).toBeTruthy();
 		}
 	});
